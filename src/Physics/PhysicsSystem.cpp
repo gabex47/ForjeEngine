@@ -193,11 +193,13 @@ std::vector<PhysicsSystem::CollisionPair> PhysicsSystem::BuildCollisionPairs(Sce
     }
 
     std::sort(proxies.begin(), proxies.end(), [](const BodyProxy& left, const BodyProxy& right) {
-        if (left.bounds.minimum.x == right.bounds.minimum.x)
+        constexpr float Epsilon = 1.0e-6F;
+        const float diff = left.bounds.minimum.x - right.bounds.minimum.x;
+        if (std::fabs(diff) < Epsilon)
         {
             return left.entity->id < right.entity->id;
         }
-        return left.bounds.minimum.x < right.bounds.minimum.x;
+        return diff < 0.0F;
     });
 
     std::vector<CollisionPair> pairs;
